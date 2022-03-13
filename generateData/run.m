@@ -36,26 +36,27 @@ num_on_random   = 1000000; % 这么多solution set random 生成后选取适当�
 % % -----------test-------------------
 
 M = 5; %目标个数
-seeds = 3:5;   % 
+seeds = 10:10;   % 
 
 for seed=seeds
     r = 1;
     Data = ones(dataset_num,data_num,M)*nan;
-    HVval = zeros(dataset_num,1);
+    HVCval = ones(dataset_num,data_num)*nan;
     % generate solution set and HVC
     Data = generateTrainingData(M,Data,data_num,num_on_triPF,num_on_invtriPF,num_on_random,seed);
     %Data(1,1,1)
     rng('shuffle');
     for i=1:dataset_num
         if mod(i, 10000) == 0
-            disp(['HVcal, i=',num2str(i),'/',num2str(dataset_num)]);
+            disp(['HVCcal, i=',num2str(i),'/',num2str(dataset_num)]);
             toc
         end
         data = Data(i,:,:);
         data = data(1,~isnan(data(1,:,1)),:);
         %b=Data(~isnan(a(:,1)),:);
-        HVval(i,1) = HV(data,r);  
+        hvc = CalHVC(data,r); 
+        HVCval(i,1:length(hvc)) = hvc;  
     end
     %保存数据，Data是solution sets，HVval是对应的hypervolume值
-    save(['//10.20.2.245/datasets/HV-Net-datasets/', target, '_data_M', num2str(M), '_', num2str(seed), '.mat'],'Data','HVval');
+    save(['//10.20.2.245/datasets/HVC-Net-datasets/data/', target, '_data_M', num2str(M), '_', num2str(seed), '.mat'],'Data','HVCval');
 end
