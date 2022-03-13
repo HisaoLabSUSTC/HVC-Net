@@ -5,8 +5,9 @@ import math
 
 
 class DeepSetHVC(nn.Module):
-    def __init__(self, dim_input, num_outputs, dim_output, dim_hidden=128):
+    def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128):
         super(DeepSetHVC, self).__init__()
+        self.device = device
         self.num_outputs = num_outputs
         self.dim_output = dim_output
         self.enc = nn.Sequential(       # \phi
