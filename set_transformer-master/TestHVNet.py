@@ -81,6 +81,7 @@ if __name__ == "__main__":
 
             # obtain pred_whole
             pred_whole = model.forward_allow_nan(input)  # [bs, 1, 1]
+            print('pred_whole:', pred_whole)
             # for each point in input (if not nan), obtain pred_without that is the predicted HV value without this point.
             # for 1 -> 100, set each column in the axis=1 in input to [nan, nan, nan]
             # and calculate pred_without [bs, 1, 1],
@@ -92,6 +93,7 @@ if __name__ == "__main__":
                 input_without = input.clone()
                 input_without[:, point_idx, :] = float('nan')
                 pred_without = model.forward_allow_nan(input_without)  # [bs, 1, 1]
+                print('pred_without:', pred_without)
                 pred.append(pred_whole - pred_without)        # [bs, 1, 1]
             # cat all pred with axis=1 as the pred
             pred = torch.cat(pred, dim=1)        # [bs, 100, 1]
