@@ -10,7 +10,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 import time
 
-# CMD code: bash run_test_HVNet.sh 7 model_M3_HVNet_5.pth test_data_M3_0.mat cuda
+# CMD code: bash run_test.sh 7 model_whole_1.pth test_data_random_2.mat cuda
 if __name__ == "__main__":
     path_dir = '/liaoweiduo/HVC-Net-datasets'  # for ubuntu server
     # path_dir = '//10.20.2.245/datasets/HVC-Net-datasets'  # for windows
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     num_outputs = 1
     dim_output = 1
 
-    model = DeepSet(device, dim_input, num_outputs, dim_output)     # HVNet
+    model = DeepSetHVC(device, dim_input, num_outputs, dim_output)
     model.load_state_dict(torch.load(os.path.join(path_dir, 'model', model_file)))
     model = model.to(device)
     print(f"Load model {model_file} done!")
@@ -77,26 +77,18 @@ if __name__ == "__main__":
     start_time = time.time()
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
-            input, output = X.to(device), y.to(device)  # [bs, 100, 3], [bs, 100, 1]
-
-            # obtain pred_whole
-            pred_whole = model.forward_allow_nan(input)  # [bs, 1, 1]
-            # for each point in input (if not nan), obtain pred_without that is the predicted HV value without this point.
-            # for 1 -> 100, set each column in the axis=1 in input to [nan, nan, nan]
-            # and calculate pred_without [bs, 1, 1],
-            # obtain pred [bs, 1, 1] as pred_whole - pred_without, for a batch
-            pred = []
-            for point_idx in range(input.shape[1]):
-                # if these column points in this batch are all nan, just set pred_hvc as zeros [bs, 1, 1]
-                # not a problem since there might be fully 100 points in 1 set.
-                input_without = input.clone()
-                input_without[:, point_idx, :] = float('nan')
-                pred_without = model.forward_allow_nan(input_without)  # [bs, 1, 1]
-                pred.append(pred_whole - pred_without)        # [bs, 1, 1]
-            # cat all pred with axis=1 as the pred
-            pred = torch.cat(pred, dim=1)        # [bs, 100, 1]
-            # calculate loss on pred and output
+            input, output = X.to(device), y.to(device)
+            pred = model.forward_allow_nan(input)       # [bs, 100, 1]
             loss = my_loss(output, pred)
+            # loss = 0
+            # for i in range(batch_size):
+            #     input, output = X[i:i+1], y[i:i+1]
+            #     mask = ~torch.isnan(input[0,:,0])
+            #     input = input[:,mask == True]
+            #     pred = model(input)
+            #     #loss = loss + loss_fn(pred,output)
+            #     loss += abs(pred-output)/output
+            # loss = loss/batch_size
             test_loss.append(loss.item())
             #pred = model(X)
             #test_loss += my_loss(y, pred)

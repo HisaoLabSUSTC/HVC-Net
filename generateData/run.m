@@ -9,12 +9,12 @@
 % -----------task-------------------
 
 % -----------train-------------------
-target          = 'train';
-data_num        = 100; %每个solution set包含的解的数量
-dataset_num     = 1000000; %一共有这么多solution set
-num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
-num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
-num_on_random   = 1000000; % 这么多solution set random 生成后选取适当多的non-dominated point
+% target          = 'train';
+% data_num        = 100; %每个solution set包含的解的数量
+% dataset_num     = 1000000; %一共有这么多solution set
+% num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
+% num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
+% num_on_random   = 1000000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % -----------train-------------------
 
 % % -----------train-------------------
@@ -27,17 +27,17 @@ num_on_random   = 1000000; % 这么多solution set random 生成后选取适当�
 % % -----------train-------------------
 
 % % -----------test-------------------
-% target          = 'train';
-% data_num        = 100; %每个solution set包含的解的数量
-% dataset_num     = 10000; %一共有这么多solution set
-% num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
-% num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
-% num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
+target          = 'test';
+data_num        = 100; %每个solution set包含的解的数量
+dataset_num     = 10000; %一共有这么多solution set
+num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
+num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
+num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % % -----------test-------------------
 
-M = 5; %目标个数
-seeds = 10:10;   % 
-
+M = 3; %目标个数
+seeds = 0:9;   % 
+ 
 for seed=seeds
     r = 1;
     Data = ones(dataset_num,data_num,M)*nan;
