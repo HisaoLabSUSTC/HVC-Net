@@ -42,7 +42,7 @@ if __name__ == "__main__":
     data = h5py.File(path)
 
     def my_loss(output, pred):      # [bs, 100, 1]
-        mask = output != 0
+        mask = ~torch.isnan(output)
         output = output[mask]       # [bs*100]
         pred = pred[mask]           # [bs*100]
         loss = torch.mean(abs(output - pred)/output)
