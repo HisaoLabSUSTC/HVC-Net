@@ -47,8 +47,8 @@ if __name__ == "__main__":
         pred = pred[mask]           # [bs*100]
         loss = torch.mean(abs(output - pred)/output)
 
-        print("output.shape", output.shape)
-        print("pred.shape", pred.shape)
+        print("output", torch.min(output), torch.max(output))
+        print("pred", torch.min(pred), torch.max(pred))
         print("loss", loss)
 
         return loss
