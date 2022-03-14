@@ -45,8 +45,11 @@ if __name__ == "__main__":
         # data = scio.loadmat(path)
         data = h5py.File(path)
 
-        def my_loss(output, pred):
-            loss = torch.mean(abs(output - pred)/output)
+        def my_loss(output, pred):  # [bs, 100, 1]
+            mask = output != 0
+            output = output[mask]  # [bs*100]
+            pred = pred[mask]  # [bs*100]
+            loss = torch.mean(abs(output - pred) / output)
             return loss
 
         ## loading process for scio
