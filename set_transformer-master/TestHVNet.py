@@ -46,6 +46,11 @@ if __name__ == "__main__":
         output = output[mask]       # [bs*100]
         pred = pred[mask]           # [bs*100]
         loss = torch.mean(abs(output - pred)/output)
+
+        print("output.shape", output.shape)
+        print("pred.shape", pred.shape)
+        print("loss", loss)
+
         return loss
 
     ## loading process for scio
