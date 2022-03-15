@@ -36,8 +36,8 @@ class DeepSetHVC(nn.Module):
                 nn.ReLU(),
                 nn.Linear(dim_hidden, num_outputs*dim_output))
                 #nn.Sigmoid())
-        #self.dec2 = nn.Softmax(dim=1)
-        self.dec2 = nn.Sigmoid()
+        self.dec2 = nn.Softmax(dim=1)
+        # self.dec2 = nn.Sigmoid()
 
     def forward(self, X):       # X [bs(1), n, 3]
         X = self.enc(X)         # X [bs(1), n, 128]
