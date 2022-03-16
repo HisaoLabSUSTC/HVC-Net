@@ -190,21 +190,20 @@ class DeepSetHVC(nn.Module):
 
     def forward_allow_nan(self, X):     # X [bs, 100, 3]
         X = self.enc(X)     # [bs, 100, 128]
-        dim = X.shape[-2]
-        num_valids = torch.sum(~torch.isnan(X[:, :, 0]), dim=-1)    # [bs]
+        num_valids = torch.sum(~torch.isnan(X), dim=-2)    # [bs, 128]
 
         X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)      # all nan becomes 0
 
         Y = X.sum(-2)       # [bs, 128]
-        Y = Y / torch.stack([num_valids for _ in range(128)], dim=1)
+        Y = Y / num_valids
         Y = self.dec(Y)
         X = Y+X
         Y = X.sum(-2)       # [bs, 128]
-        Y = Y / torch.stack([num_valids for _ in range(128)], dim=1)
+        Y = Y / num_valids
         Y = self.dec1(Y)
         X = Y+X
         Y = X.sum(-2)       # [bs, 128]
-        Y = Y / torch.stack([num_valids for _ in range(128)], dim=1)
+        Y = Y / num_valids
         Y = self.dec3(Y)
         X = Y+X
         X = self.dec2(X)

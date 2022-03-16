@@ -81,8 +81,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
             input, output = X.to(device), y.to(device)
+
             pred = model.forward_allow_nan(input)       # [bs, 100, 1]
             loss = my_loss(output, pred)
+
             # loss = 0
             # for i in range(batch_size):
             #     input, output = X[i:i+1], y[i:i+1]
