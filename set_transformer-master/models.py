@@ -118,6 +118,7 @@ class DeepSetHVC(nn.Module):
         super(DeepSetHVC, self).__init__()
         self.num_outputs = num_outputs
         self.dim_output = dim_output
+        self.device = device
         self.enc = nn.Sequential(
                 nn.Linear(dim_input, dim_hidden),
                 nn.ReLU(),
