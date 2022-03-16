@@ -41,12 +41,23 @@ if __name__ == "__main__":
     # data = scio.loadmat(path)
     data = h5py.File(path)
 
-    def my_loss(output, pred):      # [bs, 100, 1]
+    def my_loss(output, pred):      # [bs, 100, 1]  contain nan
         mask = ~torch.isnan(output)
         output = output[mask]       # [bs*100]
         pred = pred[mask]           # [bs*100]
         loss = torch.mean(abs(output - pred)/output)
         return loss
+
+    def CIR(output, pred, count=0, criteria='min'):      # [bs, 100, 1]  contain nan
+        for x, y in zip(output, pred):  # [100, 1]
+            if criteria == 'min':
+                count = count + int(torch.argmin(x[~torch.isnan(x)]) == torch.argmin(y[~torch.isnan(y)]))
+            elif criteria == 'max':
+                count = count + int(torch.argmax(x[~torch.isnan(x)]) == torch.argmax(y[~torch.isnan(y)]))
+            else:
+                raise Exception('un-implemented CIR criteria. ')
+
+        return count
 
     ## loading process for scio
     # solutionset = torch.from_numpy(data.get('Data')).float()
@@ -77,6 +88,8 @@ if __name__ == "__main__":
     num_batches = len(dataloader)
     model.eval()
     test_loss = []
+    CIR_min_count = 0
+    CIR_max_count = 0
     start_time = time.time()
 
     with torch.no_grad():
@@ -100,15 +113,18 @@ if __name__ == "__main__":
             result.append(pred.cpu().detach().numpy())       # num_batches * [bs, 100, 1]
 
             # CIR_min
-
+            CIR_min_count = CIR(y, pred, CIR_min_count, criteria='min')
 
             # CIR_max
-
+            CIR_max_count = CIR(y, pred, CIR_max_count, criteria='max')
 
     test_loss = np.mean(test_loss)
+    CIR_min = CIR_min_count / (int(size/batch_size) * batch_size)
+    CIR_max = CIR_max_count / (int(size/batch_size) * batch_size)
     end_time = time.time()
     #correct /= size
     #print(f"Avg loss: {test_loss:>8f} \n")
-    print(f'Avg Loss and Time Used: {[float(test_loss), end_time-start_time]}')
+    print(f'[Avg Loss, CIR min, CIR max, Time Used]: {[float(test_loss), CIR_min, CIR_max, end_time-start_time]}')
     scio.savemat(os.path.join(path_dir, 'results', save_file),
-                 {'result': np.concatenate(result, axis=0), 'loss': test_loss, 'time': end_time-start_time})
+                 {'result': np.concatenate(result, axis=0),
+                  'loss': test_loss, 'CIR_min': CIR_min, 'CIR_max': CIR_max, 'time': end_time-start_time})
