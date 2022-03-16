@@ -4,9 +4,9 @@ import torch.nn.functional as F
 import math
 
 
-class DeepSetHVC(nn.Module):
+class DeepSetHVC_old(nn.Module):
     def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128):
-        super(DeepSetHVC, self).__init__()
+        super(DeepSetHVC_old, self).__init__()
         self.device = device
         self.num_outputs = num_outputs
         self.dim_output = dim_output
@@ -111,6 +111,95 @@ class DeepSetHVC_(nn.Module):
             X = X+Y                             # X [bs(1), n, 128]
         X = self.rho(X)                         # X [bs(1), n, 1]
         return self.activation(X)
+
+
+class DeepSetHVC(nn.Module):
+    def __init__(self, dim_input, num_outputs, dim_output, dim_hidden=128):
+        super(DeepSetHVC, self).__init__()
+        self.num_outputs = num_outputs
+        self.dim_output = dim_output
+        self.enc = nn.Sequential(
+                nn.Linear(dim_input, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.LayerNorm(dim_hidden))
+        self.dec3 = nn.Sequential(
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.LayerNorm(dim_hidden))
+        self.dec4 = nn.Sequential(
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden))
+        self.dec = nn.Sequential(
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.LayerNorm(dim_hidden))
+        self.dec1 = nn.Sequential(
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.ReLU(),
+                nn.Linear(dim_hidden, dim_hidden),
+                nn.LayerNorm(dim_hidden))
+        self.dec2 = nn.Sequential(
+            nn.Linear(dim_hidden, dim_hidden),
+            nn.ReLU(),
+            nn.Linear(dim_hidden, dim_hidden),
+            nn.ReLU(),
+            nn.Linear(dim_hidden, dim_hidden),
+            nn.ReLU(),
+            nn.Linear(dim_hidden, num_outputs * dim_output),
+            nn.Sigmoid())
+
+    def forward(self, X):
+        X = self.enc(X)
+        Y = X.mean(-2)
+        Y = self.dec(Y)
+        X = Y+X
+        Y = X.mean(-2)
+        Y = self.dec1(Y)
+        X = Y+X
+        Y = X.mean(-2)
+        Y = self.dec3(Y)
+        X = Y+X
+        X = self.dec2(X)
+        return X
+
+    def forward_allow_nan(self, X):     # X [bs, 100, 3]
+        X = self.enc(X)
+        X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)      # all nan becomes 0
+        Y = X.mean(-2)
+        Y = self.dec(Y)
+        X = Y+X
+        Y = X.mean(-2)
+        Y = self.dec1(Y)
+        X = Y+X
+        Y = X.mean(-2)
+        Y = self.dec3(Y)
+        X = Y+X
+        X = self.dec2(X)
+        return X
 
 
 class DeepSet(nn.Module):
