@@ -99,17 +99,27 @@ class DeepSetHVC(nn.Module):
             nn.Linear(dim_hidden, num_outputs * dim_output))
             # nn.Sigmoid())
         self.activation = nn.Sigmoid()
-        # self.activation = nn.Softmax(dim=-2)
+        # self.activation = nn.Softmax(dim=-2)      # if use softmax, batch with different num of nan is not allowed.
 
     def forward(self, X, allow_nan=False):      # X [bs(1), n, 3]
+        """
+        using X_0, nan remains in X.
+        since output can contain nan,
+        if activation is Softmax(dim=-2), batch with diff num of nan is not allowed.
+        :param X:
+        :param allow_nan:
+        :return:
+        """
         X = self.phi(X)                         # X [bs(1), n, 128]
         num_valids = torch.sum(~torch.isnan(X), dim=-2)  # [bs(1), 128]
-        if allow_nan:
-            X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)  # all nan becomes 0
+        # if allow_nan:
+        #     X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)  # all nan becomes 0
         for i in range(self.num_blocks):
-            Y = X.sum(-2)                       # Y [bs(1), 128]
+            X_0 = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)  # all nan becomes 0
+            Y = X_0.sum(-2)                     # Y [bs(1), 128]
             Y = Y / num_valids                  # X.mean(-2)
             Y = self.etas[i](Y)                 # Y [bs(1), 128]
+            Y = torch.stack([Y for _ in range(X.shape[-2])], dim=-2)    # Y [bs(1), n, 128]
             X = X+Y                             # X [bs(1), n, 128]
         X = self.rho(X)                         # X [bs(1), n, 1]
         return self.activation(X)

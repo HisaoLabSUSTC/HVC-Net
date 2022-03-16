@@ -78,6 +78,7 @@ if __name__ == "__main__":
     model.eval()
     test_loss = []
     start_time = time.time()
+
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
             X, y = X.to(device), y.to(device)
@@ -91,22 +92,19 @@ if __name__ == "__main__":
             #     pred = model(input)  # [1, 30, 1]
             #     loss.append(my_loss(output, pred))
             # loss = torch.mean(torch.stack(loss))
-            pred = model.forward_allow_nan(X)       # [bs, 100, 1]
+            # 每个set包含的valid point数不同，求mean之后再求mean，和直接所有的求mean是会有不同的。
+            pred = model.forward_allow_nan(X)       # [bs, 100, 1]  contain nan
             loss = my_loss(y, pred)
 
-            # loss = 0
-            # for i in range(batch_size):
-            #     input, output = X[i:i+1], y[i:i+1]
-            #     mask = ~torch.isnan(input[0,:,0])
-            #     input = input[:,mask == True]
-            #     pred = model(input)
-            #     #loss = loss + loss_fn(pred,output)
-            #     loss += abs(pred-output)/output
-            # loss = loss/batch_size
             test_loss.append(loss.item())
-            #pred = model(X)
-            #test_loss += my_loss(y, pred)
             result.append(pred.cpu().detach().numpy())       # num_batches * [bs, 100, 1]
+
+            # CIR_min
+
+
+            # CIR_max
+
+
     test_loss = np.mean(test_loss)
     end_time = time.time()
     #correct /= size
