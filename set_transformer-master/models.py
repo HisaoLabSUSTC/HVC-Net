@@ -192,8 +192,8 @@ class DeepSetHVC(nn.Module):
         X = self.enc(X)
         output = []
         for x in X:     # [100, 1]
-            x = x[~torch.isnan(x)].view(-1, 1)      # [30, 1]
-            y = x.mean(-2, keepdims=True)           # [1, 1]
+            x = x[~torch.isnan(x)].view(-1, 128)      # [30, 128]
+            y = x.mean(-2, keepdims=True)             # [1, 128]
             y = self.dec(y)
             x = y + x
             y = x.mean(-2, keepdims=True)
