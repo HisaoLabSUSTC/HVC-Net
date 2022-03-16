@@ -103,11 +103,12 @@ class DeepSetHVC_(nn.Module):
 
     def forward(self, X, allow_nan=False):      # X [bs(1), n, 3]
         X = self.phi(X)                         # X [bs(1), n, 128]
+        num_valids = torch.sum(~torch.isnan(X), dim=-2)  # [bs, 128]
         if allow_nan:
-            # TBD, 变成0，后面mean有问题，这里要么统计非nan个数，后面用sum再除以个数vector，要么就用循环每个bs。
             X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)  # all nan becomes 0
         for i in range(self.num_blocks):
-            Y = X.mean(-2)                      # Y [bs(1), 128]
+            Y = X.sum(-2)                       # Y [bs(1), 128]
+            Y = Y / num_valids                  # X.mean(-2)
             Y = self.etas[i](Y)                 # Y [bs(1), 128]
             X = X+Y                             # X [bs(1), n, 128]
         X = self.rho(X)                         # X [bs(1), n, 1]

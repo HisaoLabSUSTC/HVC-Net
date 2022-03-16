@@ -80,10 +80,19 @@ if __name__ == "__main__":
     start_time = time.time()
     with torch.no_grad():
         for batch, (X, y) in enumerate(dataloader):
-            input, output = X.to(device), y.to(device)
+            X, y = X.to(device), y.to(device)
 
-            pred = model.forward_allow_nan(input)       # [bs, 100, 1]
-            loss = my_loss(output, pred)
+            loss = []
+            for batch_idx in range(batch_size):
+                input, output = X[batch_idx:batch_idx + 1], y[batch_idx:batch_idx + 1]  # [1, 100, 3] [1, 100, 1]
+                mask = ~torch.isnan(input[0, :, 0])  # [100]
+                input = input[:, mask == True]  # [1, 30, 3]
+                output = output[:, mask == True]  # [1, 30, 1]
+                pred = model(input)  # [1, 30, 1]
+                loss.append(my_loss(output, pred))
+            loss = torch.mean(torch.stack(loss))
+            # pred = model.forward_allow_nan(input)       # [bs, 100, 1]
+            # loss = my_loss(output, pred)
 
             # loss = 0
             # for i in range(batch_size):
