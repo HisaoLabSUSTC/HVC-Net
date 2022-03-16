@@ -60,9 +60,9 @@ class DeepSetHVC_old(nn.Module):
         return X
 
 
-class DeepSetHVC_(nn.Module):
+class DeepSetHVC(nn.Module):
     def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128):
-        super(DeepSetHVC_, self).__init__()
+        super(DeepSetHVC, self).__init__()
         self.device = device
         self.num_outputs = num_outputs
         self.dim_output = dim_output
@@ -103,7 +103,7 @@ class DeepSetHVC_(nn.Module):
 
     def forward(self, X, allow_nan=False):      # X [bs(1), n, 3]
         X = self.phi(X)                         # X [bs(1), n, 128]
-        num_valids = torch.sum(~torch.isnan(X), dim=-2)  # [bs, 128]
+        num_valids = torch.sum(~torch.isnan(X), dim=-2)  # [bs(1), 128]
         if allow_nan:
             X = torch.where(torch.isnan(X), torch.zeros(1, 1).to(self.device), X)  # all nan becomes 0
         for i in range(self.num_blocks):
@@ -114,10 +114,13 @@ class DeepSetHVC_(nn.Module):
         X = self.rho(X)                         # X [bs(1), n, 1]
         return self.activation(X)
 
+    def forward_allow_nan(self, X):
+        return self.forward(X, allow_nan=True)
 
-class DeepSetHVC(nn.Module):
+
+class DeepSetHVC_(nn.Module):
     def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128):
-        super(DeepSetHVC, self).__init__()
+        super(DeepSetHVC_, self).__init__()
         self.num_outputs = num_outputs
         self.dim_output = dim_output
         self.device = device
