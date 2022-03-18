@@ -76,7 +76,7 @@ if __name__ == "__main__":
     num_outputs = 1
     dim_output = 1
 
-    model = DeepSetHVC_old(device, dim_input, num_outputs, dim_output)
+    model = DeepSetHVC(device, dim_input, num_outputs, dim_output)
     model.load_state_dict(torch.load(os.path.join(path_dir, 'model', model_file)))
     model = model.to(device)
     print(f"Load model {model_file} done!")
