@@ -128,10 +128,10 @@ if __name__ == "__main__":
             result.append(pred.cpu().detach().numpy())       # num_batches * [bs, 100, 1]
 
             # CIR_min
-            CIR_min_count = CIR(y, pred, CIR_min_count, criteria='min')
+            CIR_min_count = CIR(output, pred, CIR_min_count, criteria='min')
 
             # CIR_max
-            CIR_max_count = CIR(y, pred, CIR_max_count, criteria='max')
+            CIR_max_count = CIR(output, pred, CIR_max_count, criteria='max')
 
     test_loss = np.mean(test_loss)
     CIR_min = CIR_min_count / (int(size/batch_size) * batch_size)
