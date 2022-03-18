@@ -98,8 +98,8 @@ class DeepSetHVC(nn.Module):
             nn.ReLU(),
             nn.Linear(dim_hidden, num_outputs * dim_output))
             # nn.Sigmoid())
-        # self.activation = nn.Sigmoid()
-        self.activation = nn.Softmax(dim=-2)      # if use softmax, batch with different num of nan is not allowed.
+        self.activation = nn.Sigmoid()
+        # self.activation = nn.Softmax(dim=-2)      # if use softmax, batch with different num of nan is not allowed.
 
     def forward(self, X, allow_nan=False):      # X [bs(1), n, 3]
         """
