@@ -10,3 +10,6 @@ python HVCnet.py $2 $3
 
 # bash run.sh GPU_ID TRAIN_FILE SAVE_MODEL
 # bash run.sh 0 train_data_M3_10.mat model_M3_10.pth
+
+# bash run.sh 1 test_data_M3_9.mat model_M3_small_9.pth
+# bash run.sh 2 test_data_M3_9.mat model_M3_small_minaware_9.pth
