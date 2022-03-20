@@ -46,6 +46,9 @@ def R2HVC(data_set, weight_vector_grid, exclusive_index, reference_point, is_max
         else:
             temp = (data_set_exclusive - exclusive_point) / \
                 weight_vector_grid[i, :]
+        # if data_set_exclusive.shape[0] == 0:   # data_set only contain 1 point
+        #     x = 0
+        # else:
         x = np.min(np.max(temp, axis=1))
         y = y + math.pow(min(x, temp1[i]), dimenstion)
 

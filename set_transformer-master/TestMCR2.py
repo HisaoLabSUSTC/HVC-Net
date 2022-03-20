@@ -58,10 +58,13 @@ if __name__ == "__main__":
         ## loading process for h5py
         solutionset = np.transpose(data.get('Data'))  # [dataset_num, data_num, M]
         hvc = np.transpose(data.get('HVCval'))  # [dataset_num, data_num]
+        hvc = np.reshape(hvc, (hvc.shape[0], hvc.shape[1], 1))    # [dataset_num, data_num, 1]
 
         L, N, M = solutionset.shape
-        sampleNum = np.arange(100, 2001, 100)   # [20,]   [100, 200, ..., 2000]
-        lineNum = np.arange(10, 201, 10)        # [20,]   [10, 20, ..., 200]
+        # sampleNum = np.arange(100, 2001, 100)   # [20,]   [100, 200, ..., 2000]
+        # lineNum = np.arange(10, 201, 10)        # [20,]   [10, 20, ..., 200]
+        sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
+        lineNum = np.arange(1, 21, 1)        # [20,]   [1, 2, ..., 20]
 
         Time_MC = np.zeros(len(sampleNum))
         Loss_MC = np.zeros(len(sampleNum))
@@ -79,26 +82,33 @@ if __name__ == "__main__":
             loss = []
             CIR_min_count = 0
             CIR_max_count = 0
+            CIR_total = 0
             start_time = time.time()
             for i in range(L):
                 pop = solutionset[i]        # [N, M]
                 mask = ~np.isnan(pop[:, 0])  # [100]
                 pop = pop[mask == True, :]  # [30, 3]
 
-                hvcmc = [MC_HVC(pop, index, sampleNum[k], reference_point, is_maximum=False)
-                         for index in range(len(pop))]
+                if pop.shape[0] == 1:       # only contain 1 point.
+                    continue
+
+                hvcmc = np.array([MC_HVC(pop, index, sampleNum[k], reference_point, is_maximum=False)
+                         for index in range(len(pop))])
+                hvcmc = hvcmc.reshape(hvcmc.shape[0], 1)
 
                 loss.append(my_loss(hvc[i], hvcmc))
 
                 # CIR_min
-                CIR_min_count = CIR(hvc[i], hvcmc, CIR_min_count, criteria='min')
+                CIR_min_count = CIR(hvc[i][np.newaxis, :], hvcmc[np.newaxis, :], CIR_min_count, criteria='min')
 
                 # CIR_max
-                CIR_max_count = CIR(hvc[i], hvcmc, CIR_max_count, criteria='max')
+                CIR_max_count = CIR(hvc[i][np.newaxis, :], hvcmc[np.newaxis, :], CIR_max_count, criteria='max')
+
+                CIR_total = CIR_total + 1
 
             loss = np.mean(loss)
-            CIR_min = CIR_min_count / L
-            CIR_max = CIR_max_count / L
+            CIR_min = CIR_min_count / CIR_total
+            CIR_max = CIR_max_count / CIR_total
             end_time = time.time()
 
             Loss_MC[k] = loss
@@ -112,26 +122,33 @@ if __name__ == "__main__":
             loss = []
             CIR_min_count = 0
             CIR_max_count = 0
+            CIR_total = 0
             start_time = time.time()
             for i in range(L):
                 pop = solutionset[i]        # [N, M]
                 mask = ~np.isnan(pop[:, 0])  # [100]
                 pop = pop[mask == True, :]  # [30, 3]
 
-                hvcr2 = [R2HVC(pop, generate_WV_grid(lineNum[k], M), index, reference_point, is_maximize=False)
-                         for index in range(len(pop))]
+                if pop.shape[0] == 1:       # only contain 1 point.
+                    continue
+
+                hvcr2 = np.array([R2HVC(pop, generate_WV_grid(lineNum[k], M), index, reference_point, is_maximize=False)
+                         for index in range(len(pop))])
+                hvcr2 = hvcr2.reshape(hvcr2.shape[0], 1)
 
                 loss.append(my_loss(hvc[i], hvcr2))
 
                 # CIR_min
-                CIR_min_count = CIR(hvc[i], hvcr2, CIR_min_count, criteria='min')
+                CIR_min_count = CIR(hvc[i][np.newaxis, :], hvcr2[np.newaxis, :], CIR_min_count, criteria='min')
 
                 # CIR_max
-                CIR_max_count = CIR(hvc[i], hvcr2, CIR_max_count, criteria='max')
+                CIR_max_count = CIR(hvc[i][np.newaxis, :], hvcr2[np.newaxis, :], CIR_max_count, criteria='max')
+
+                CIR_total = CIR_total + 1
 
             loss = np.mean(loss)
-            CIR_min = CIR_min_count / L
-            CIR_max = CIR_max_count / L
+            CIR_min = CIR_min_count / CIR_total
+            CIR_max = CIR_max_count / CIR_total
             end_time = time.time()
 
             Loss_R2[k] = loss
