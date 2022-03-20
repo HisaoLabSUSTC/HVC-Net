@@ -9,12 +9,12 @@
 % -----------task-------------------
 
 % -----------train-------------------
-% target          = 'train';
-% data_num        = 100; %每个solution set包含的解的数量
-% dataset_num     = 1000000; %一共有这么多solution set
-% num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
-% num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
-% num_on_random   = 1000000; % 这么多solution set random 生成后选取适当多的non-dominated point
+target          = 'train';
+data_num        = 100; %每个solution set包含的解的数量
+dataset_num     = 100000; %一共有这么多solution set
+num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
+num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
+num_on_random   = 100000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % -----------train-------------------
 
 % % -----------train-------------------
@@ -27,16 +27,16 @@
 % % -----------train-------------------
 
 % % -----------test-------------------
-target          = 'test';
-data_num        = 100; %每个solution set包含的解的数量
-dataset_num     = 10000; %一共有这么多solution set
-num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
-num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
-num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
+% target          = 'test';
+% data_num        = 100; %每个solution set包含的解的数量
+% dataset_num     = 10000; %一共有这么多solution set
+% num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
+% num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
+% num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % % -----------test-------------------
 
 M = 3; %目标个数
-seeds = 0:9;   % 
+seeds = 100:100;   % 
  
 for seed=seeds
     r = 1;
@@ -58,5 +58,5 @@ for seed=seeds
         HVCval(i,1:length(hvc)) = hvc;  
     end
     %保存数据，Data是solution sets，HVval是对应的hypervolume值
-    save(['//10.20.2.245/datasets/HVC-Net-datasets/data/', target, '_data_M', num2str(M), '_', num2str(seed), '.mat'],'Data','HVCval');
+    save(['//10.20.2.245/datasets/HVC-Net-datasets/data/', target, '_data_M', num2str(M), '_100K_', num2str(seed), '.mat'],'Data','HVCval');
 end
