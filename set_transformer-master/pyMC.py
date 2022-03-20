@@ -49,6 +49,8 @@ def MC_HVC(data_set, exclusive_index, num_sample, reference_point, is_maximum):
             dominance_check = (data_set >= points[i, :])
         else:
             dominance_check = (data_set <= points[i, :])
+        if data_set.shape[0] == 0:      # origin dataset only 1 point
+            dominance_check = np.array([[False for _ in range(dimension)]])
         if max(np.sum(dominance_check, axis=1)) == dimension:
             miss+=1
     return ((num_sample - miss) / num_sample) * np.prod(abs(exclusive_point - u))
