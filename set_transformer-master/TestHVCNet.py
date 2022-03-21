@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 loss = my_loss(y[i][mask == True].unsqueeze(0), pred)
 
                 test_loss.append(loss.item())
-                result_batch.append(pred.cpu().detach().numpy())
+                result_batch.append(y[i].cpu().detach().numpy())        # each pred[i] has different shapes.
 
                 CIR_min_count = CIR(y[i:i + 1], pred, CIR_min_count, criteria='min')
                 CIR_max_count = CIR(y[i:i + 1], pred, CIR_max_count, criteria='max')
