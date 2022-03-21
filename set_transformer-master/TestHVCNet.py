@@ -124,7 +124,7 @@ if __name__ == "__main__":
             for i in range(len(X)):
 
                 pop = X[i]        # [N, M]
-                mask = ~np.isnan(pop[:, 0])  # [100]
+                mask = ~torch.isnan(pop[:, 0])  # [100]
                 pop = pop[mask == True, :]  # [30, 3]
 
                 if pop.shape[0] == 1:       # only contain 1 point.
