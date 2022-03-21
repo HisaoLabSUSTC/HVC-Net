@@ -131,7 +131,7 @@ if __name__ == "__main__":
                     continue
 
                 pred = model(pop.unsqueeze(0))
-                loss = my_loss(y[i:i + 1], pred)
+                loss = my_loss(y[i][mask == True].unsqueeze(0), pred)
 
                 test_loss.append(loss.item())
                 result_batch.append(pred.cpu().detach().numpy())
