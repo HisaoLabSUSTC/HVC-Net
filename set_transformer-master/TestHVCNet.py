@@ -106,17 +106,40 @@ if __name__ == "__main__":
             #     loss.append(my_loss(output, pred))
             # loss = torch.mean(torch.stack(loss))
             # 每个set包含的valid point数不同，求mean之后再求mean，和直接所有的求mean是会有不同的。
-            pred = model.forward_allow_nan(X)       # [bs, 100, 1]  contain nan
-            loss = my_loss(y, pred)
 
-            test_loss.append(loss.item())
-            result.append(pred.cpu().detach().numpy())       # num_batches * [bs, 100, 1]
+            # pred = model.forward_allow_nan(X)       # [bs, 100, 1]  contain nan
+            # loss = my_loss(y, pred)
+            #
+            # test_loss.append(loss.item())
+            # result.append(pred.cpu().detach().numpy())       # num_batches * [bs, 100, 1]
+            #
+            # # CIR_min
+            # CIR_min_count = CIR(y, pred, CIR_min_count, criteria='min')
+            #
+            # # CIR_max
+            # CIR_max_count = CIR(y, pred, CIR_max_count, criteria='max')
 
-            # CIR_min
-            CIR_min_count = CIR(y, pred, CIR_min_count, criteria='min')
+            # each dataset
+            result_batch = []
+            for i in range(len(X)):
 
-            # CIR_max
-            CIR_max_count = CIR(y, pred, CIR_max_count, criteria='max')
+                pop = X[i]        # [N, M]
+                mask = ~np.isnan(pop[:, 0])  # [100]
+                pop = pop[mask == True, :]  # [30, 3]
+
+                if pop.shape[0] == 1:       # only contain 1 point.
+                    continue
+
+                pred = model(pop.unsqueeze(0))
+                loss = my_loss(y[i:i + 1], pred)
+
+                test_loss.append(loss.item())
+                result_batch.append(pred.cpu().detach().numpy())
+
+                CIR_min_count = CIR(y[i:i + 1], pred, CIR_min_count, criteria='min')
+                CIR_max_count = CIR(y[i:i + 1], pred, CIR_max_count, criteria='max')
+
+            result.append(np.stack(result_batch))
 
     test_loss = np.mean(test_loss)
     CIR_min = CIR_min_count / (int(size/batch_size) * batch_size)
