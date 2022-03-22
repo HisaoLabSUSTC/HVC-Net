@@ -61,12 +61,12 @@ class DeepSetHVC_old(nn.Module):
 
 
 class DeepSetHVC(nn.Module):
-    def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128):
+    def __init__(self, device, dim_input, num_outputs, dim_output, dim_hidden=128, num_blocks=3):
         super(DeepSetHVC, self).__init__()
         self.device = device
         self.num_outputs = num_outputs
         self.dim_output = dim_output
-        self.num_blocks = 3
+        self.num_blocks = num_blocks
 
         self.phi = nn.Sequential(
                 nn.Linear(dim_input, dim_hidden),
@@ -98,8 +98,8 @@ class DeepSetHVC(nn.Module):
             nn.ReLU(),
             nn.Linear(dim_hidden, num_outputs * dim_output))
             # nn.Sigmoid())
-        # self.activation = nn.Sigmoid()
-        self.activation = nn.Softmax(dim=-2)      # if use softmax, batch with different num of nan is not allowed.
+        self.activation = nn.Sigmoid()
+        # self.activation = nn.Softmax(dim=-2)      # if use softmax, batch with different num of nan is not allowed.
 
     def forward(self, X, allow_nan=False):      # X [bs(1), n, 3]
         """
