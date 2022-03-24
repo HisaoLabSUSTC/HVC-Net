@@ -76,7 +76,7 @@ if __name__ == "__main__":
     num_outputs = 1
     dim_output = 1
 
-    num_blocks = 5
+    num_blocks = 10
     model = DeepSetHVC(device, dim_input, num_outputs, dim_output, num_blocks=num_blocks)
     model.load_state_dict(torch.load(os.path.join(path_dir, 'model', model_file)))
     model = model.to(device)
