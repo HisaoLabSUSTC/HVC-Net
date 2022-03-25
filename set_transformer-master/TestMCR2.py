@@ -16,11 +16,16 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         M = int(sys.argv[1])
+        # 1-19 seeds
+        test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 10)]
+    if len(sys.argv) == 3:
+        M, seed = int(sys.argv[1]), int(sys.argv[2])
+        test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(seed, seed+1)]
+        # test on seed 1 to find proper range
     else:
         M = 3
+        test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 10)]
 
-    # 1-19 seeds
-    test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 9)]
 
     for test_file in test_files:
         save_file = f'result_MC_R2_{test_file[:-4]}.mat'
@@ -63,8 +68,10 @@ if __name__ == "__main__":
         L, N, M = solutionset.shape
         # sampleNum = np.arange(100, 2001, 100)   # [20,]   [100, 200, ..., 2000]
         # lineNum = np.arange(10, 201, 10)        # [20,]   [10, 20, ..., 200]
+        # sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
+        # lineNum = np.arange(1, 21, 1)        # [20,]   [1, 2, ..., 20]
         sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
-        lineNum = np.arange(1, 21, 1)        # [20,]   [1, 2, ..., 20]
+        lineNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
 
         Time_MC = np.zeros(len(sampleNum))
         Loss_MC = np.zeros(len(sampleNum))
@@ -75,7 +82,7 @@ if __name__ == "__main__":
         CIRmin_R2 = np.zeros(len(lineNum))
         CIRmax_R2 = np.zeros(len(lineNum))
 
-        reference_point = [1.0, 1.0, 1.0]
+        reference_point = [1.0 for _ in range(M)]
 
         for k in range(len(sampleNum)):
             print(f'MC {k}')
@@ -158,8 +165,9 @@ if __name__ == "__main__":
             print(f'loss {loss}, CIR min {CIR_min}, CIR max {CIR_max}, time {end_time - start_time}')
 
         # save
-        scio.savemat(os.path.join(path_dir, save_file), {'Loss': Loss_MC,  'CIR_min': CIRmin_MC,
-                                                         'CIR_max': CIRmax_MC, 'Time': Time_MC,
-                                                         'Loss1': Loss_R2,  'CIR_min1': CIRmin_R2,
-                                                         'CIR_max1': CIRmax_R2,
-                                                         'Time1': Time_R2})
+        scio.savemat(os.path.join(path_dir, 'results', save_file), {
+            'Loss': Loss_MC,  'CIR_min': CIRmin_MC,
+            'CIR_max': CIRmax_MC, 'Time': Time_MC,
+            'Loss1': Loss_R2,  'CIR_min1': CIRmin_R2,
+            'CIR_max1': CIRmax_R2,
+            'Time1': Time_R2})
