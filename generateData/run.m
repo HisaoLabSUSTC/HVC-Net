@@ -35,7 +35,7 @@ num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生�
 num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % % -----------test-------------------
 
-M = 3; %目标个数
+M = 10; %目标个数
 seeds = 0:9;   % 
  
 for seed=seeds
