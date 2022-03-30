@@ -70,8 +70,10 @@ if __name__ == "__main__":
         # lineNum = np.arange(10, 201, 10)        # [20,]   [10, 20, ..., 200]
         # sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
         # lineNum = np.arange(1, 21, 1)        # [20,]   [1, 2, ..., 20]
-        sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
-        lineNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
+        # sampleNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
+        # lineNum = np.arange(10, 201, 10)   # [20,]   [10, 20, ..., 200]
+        sampleNum = np.arange(5, 101, 5)   # [20,]   [5, 10, ..., 100]
+        lineNum = np.arange(5, 101, 5)   # [20,]   [5, 10, ..., 100]
 
         Time_MC = np.zeros(len(sampleNum))
         Loss_MC = np.zeros(len(sampleNum))
