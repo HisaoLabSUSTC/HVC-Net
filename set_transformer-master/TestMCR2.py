@@ -22,6 +22,10 @@ if __name__ == "__main__":
         M, seed = int(sys.argv[1]), int(sys.argv[2])
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(seed, seed+1)]
         # test on seed 1 to find proper range
+    if len(sys.argv) == 4:
+        M, seed0, seed1 = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
+        test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(seed0, seed1)]
+        # test on seed [seed0, seed1) to find proper range
     else:
         M = 3
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 10)]
