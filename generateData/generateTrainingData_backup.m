@@ -51,7 +51,7 @@ function Data = generateTrainingData(M,Data,data_num,num_on_triPF, num_on_invtri
         
         % the dataset contain num of points
         num = 0;
-        while num <= 100       % <=0 for [1,100], <=100 for [101, 200]
+        while num <= 0       % <=0 for [1,100], <=100 for [101, 200]
             num = ceil(data_num*rand);
         end
         disp(['num=', num2str(num)])
