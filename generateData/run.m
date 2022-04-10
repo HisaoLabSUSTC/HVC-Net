@@ -28,27 +28,27 @@
 
 % % -----------test-------------------
 target          = 'test';
-data_num        = 100; %每个solution set包含的解的数量
+data_num        = 100;   %每个solution set包含的解的数量
 dataset_num     = 10000; %一共有这么多solution set
 num_on_triPF    = 0;     % 这么多solution set从triangular PF上生成
 num_on_invtriPF = 0;     % 这么多solution set从inverted triangular PF上生成
 num_on_random   = 10000; % 这么多solution set random 生成后选取适当多的non-dominated point
 % % -----------test-------------------
 
-M = 10; %目标个数
-seeds = 0:9;   % 
+M = 3; %目标个数
+seeds = 9:9;   % 0:8
  
 for seed=seeds
     r = 1;
     Data = ones(dataset_num,data_num,M)*nan;
     HVCval = ones(dataset_num,data_num)*nan;
     % generate solution set and HVC
-    Data = generateTrainingData(M,Data,data_num,num_on_triPF,num_on_invtriPF,num_on_random,seed);
+    Data = generateTrainingData(M,Data,data_num,num_on_triPF,num_on_invtriPF,num_on_random,seed,'best');
     %Data(1,1,1)
     rng('shuffle');
     for i=1:dataset_num
-        if mod(i, 10000) == 0
-            disp(['HVCcal, i=',num2str(i),'/',num2str(dataset_num)]);
+        if mod(i, 1000) == 0
+            disp(['HVCcal, i=',num2str(i),'/',num2str(dataset_num), ', seed=', num2str(seed)]);
             toc
         end
         data = Data(i,:,:);
@@ -58,5 +58,5 @@ for seed=seeds
         HVCval(i,1:length(hvc)) = hvc;  
     end
     %保存数据，Data是solution sets，HVval是对应的hypervolume值
-    save(['//10.20.2.245/datasets/HVC-Net-datasets/data/', target, '_data_M', num2str(M), '_', num2str(seed), '.mat'],'Data','HVCval');
+    save(['//10.20.2.245/datasets/HVC-Net-datasets/data/', target, '_data_M', num2str(M), '_best_', num2str(seed), '.mat'],'Data','HVCval');
 end
