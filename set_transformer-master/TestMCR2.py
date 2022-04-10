@@ -14,6 +14,8 @@ if __name__ == "__main__":
     path_dir = '/liaoweiduo/HVC-Net-datasets'  # for ubuntu server
     # path_dir = '//10.20.2.245/datasets/HVC-Net-datasets'  # for windows
 
+    print(sys.argv)
+    
     if len(sys.argv) == 2:
         M = int(sys.argv[1])
         # 1-19 seeds
