@@ -20,12 +20,11 @@ if __name__ == "__main__":
         M = int(sys.argv[1])
         # 1-19 seeds
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 10)]
-    if len(sys.argv) == 3:
+    elif len(sys.argv) == 3:
         M, seed = int(sys.argv[1]), int(sys.argv[2])
         test_files = [f'test_data_M{M}_200_{seed}.mat' for seed in range(seed, seed+1)]
         # test on seed 1 to find proper range
-        print('test_files:', test_files)
-    if len(sys.argv) == 4:
+    elif len(sys.argv) == 4:
         M, seed0, seed1 = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(seed0, seed1)]
         # test on seed [seed0, seed1) to find proper range
@@ -33,6 +32,7 @@ if __name__ == "__main__":
         M = 3
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(0, 10)]
 
+    print('test_files:', test_files)
 
     for test_file in test_files:
         save_file = f'result_MC_R2_{test_file[:-4]}.mat'
