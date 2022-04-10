@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # path_dir = '//10.20.2.245/datasets/HVC-Net-datasets'  # for windows
 
     print(sys.argv)
-    
+
     if len(sys.argv) == 2:
         M = int(sys.argv[1])
         # 1-19 seeds
@@ -24,6 +24,7 @@ if __name__ == "__main__":
         M, seed = int(sys.argv[1]), int(sys.argv[2])
         test_files = [f'test_data_M{M}_200_{seed}.mat' for seed in range(seed, seed+1)]
         # test on seed 1 to find proper range
+        print('test_files:', test_files)
     if len(sys.argv) == 4:
         M, seed0, seed1 = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3])
         test_files = [f'test_data_M{M}_{seed}.mat' for seed in range(seed0, seed1)]
