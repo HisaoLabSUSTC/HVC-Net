@@ -1,3 +1,7 @@
+"""
+An example of how to use HVC-Net
+"""
+
 import scipy.io as scio
 import torch
 from models import *
@@ -5,7 +9,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
 
-dim_input = 3
+dim_input = 5
 num_outputs = 1
 dim_output = 1
 
@@ -18,8 +22,6 @@ path = 'testdata-HVC.mat'
 data = scio.loadmat(path)
 
 solutionset = torch.from_numpy(data.get('Data')).float()
-hv = torch.from_numpy(data.get('HVCval')).float()
-hv = torch.reshape(hv, (hv.shape[0],hv.shape[1],1))
 
 index = 2
 set = solutionset[index]
@@ -27,4 +29,3 @@ mask = ~torch.isnan(set)
 set = set[mask[:, 0] == True]
 
 print(model(set))
-print(hv[index])
