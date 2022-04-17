@@ -9,6 +9,7 @@ export CUDA_VISIBLE_DEVICES=$GPU_ID
 python HVCnet.py $2 $3
 
 # bash run.sh GPU_ID TRAIN_FILE SAVE_MODEL
+
 # bash run.sh 0 train_data_M3_10.mat model_M3_10.pth
 
 # bash run.sh 1 train_data_M3_100K_100.mat model_M3_100K_100.pth
